@@ -79,8 +79,10 @@ namespace JiminnyAutomationTask.Pages
             actions = new Actions(driver);
             for (int i = 0; i < some; i++)
             {
-                actions.MoveToElement(AllRemoveButtons[i]).Build().Perform();
-                actions.Click(AllRemoveButtons[i]).Build().Perform();
+                //actions.MoveToElement(AllHoverElements[i]).Build().Perform();
+                //actions.Click(AllRemoveButtons[i]).Build().Perform();
+                actions.MoveToElement(AllHoverElements[i]).Perform();
+                actions.Click(AllRemoveButtons[i]).Perform();
             }
         }
         public void CheckOrUncheckTaskMassOperation()
@@ -111,6 +113,7 @@ namespace JiminnyAutomationTask.Pages
         }
         public int AssertCompletedTasksCleared()
         {
+            Thread.Sleep(1000);
             int result=  AllTasks.Count();
             return result;
         }

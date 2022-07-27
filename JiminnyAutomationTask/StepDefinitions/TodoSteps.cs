@@ -14,7 +14,7 @@ namespace JiminnyAutomationTask.StepDefinitions
     {
         //As it was a Single Page Application I directly decided to inherit the TodoPage, not creating a new instance of it.
         protected IWebDriver driver;
-        protected WebDriverWait wait;
+        //protected WebDriverWait wait;
         //constructor was needed here because of the inheritance
         public TodoSteps(IWebDriver driver) : base(driver)
         {
@@ -72,31 +72,27 @@ namespace JiminnyAutomationTask.StepDefinitions
         [When(@"user clicks remove for the (.*) tasks")]
         public void WhenUserClicksRemoveForTheTasks(int someTasks)
         {
-            RemoveSomeTasks(someTasks);
+           RemoveSomeTasks(someTasks);
         }
+      
 
         #endregion
-
-
-
-
         #region Then Section
-        [Then(@"tasks are created successfully")]
-        public void ThenATaskIsCreatedSuccessfully()
+        [Then(@"tasks with (.*) are created successfully")]
+        public void ThenATaskIsCreatedSuccessfully(string taskName)
         {
             List<string> tasks = new List<string>();
             AssertTaskNames();
             if(ResultList.Count == 1)
             {
-
-                tasks.Add("task1");
+                tasks.Add(taskName);
                 Assert.AreEqual(ResultList, tasks);
             }
             else
             {
                 for(int i = 0; i < ResultList.Count; i++)
                 {
-                    tasks.Add("task3");                    
+                    tasks.Add(taskName);                    
                 }
                 Assert.AreEqual(ResultList, tasks);
             }
@@ -172,7 +168,47 @@ namespace JiminnyAutomationTask.StepDefinitions
         {
             Assert.AreEqual(allTasks- someTasks ,AllTasks.Count());
         }
-      
+
+        [Then(@"(.*) is present")]
+        public void ThenElementIsPresent(string element)
+        {
+            if (element.Equals("toggle-all arrow"))
+                Assert.IsTrue(ToggleAllMassOperation.Displayed);
+            else if (element.Equals("footer"))
+                Assert.IsTrue(Footer.Displayed);
+            else if (element.Equals("Clear Completed button"))
+                Assert.IsTrue(ClearCompletedButton.Displayed);
+            else if (element.Equals("the tip"))
+                Assert.IsTrue(TodosEditTip.Displayed); //the reason I don't assert the text but only if the element is present or not is bc its text is in the XPath.
+            //So if an element "Double-click to edit a todo" is deleted we will get the needed error
+        }
+        [Then(@"(.*) is not present")]
+        public void ThenElementIsNotPresent(string element)
+        {  
+            if(element.Equals("toggle-all arrow"))
+                Assert.IsFalse(ToggleAllMassOperation.Displayed);
+            else  if(element.Equals("footer"))
+                Assert.IsFalse(Footer.Displayed);
+            else if (element.Equals("Clear Completed button"))
+                Assert.IsFalse(ClearCompletedButton.Displayed);
+        }
+
+        [Then(@"the (.*) completed of (.*) tasks goes from Active to Completed")]
+        public void ThenTheCompletedOfTaskGoesFromActiveToCompleted(int some, int all)
+        {
+            Assert.AreEqual(AllTasks.Count(), all - some);
+        }
+
+        [Then(@"placeholder value must say (.*)")]
+        public void ThenPlaceholderValueMustSayWhatNeedsToBeDone(string message)
+        {
+            Assert.AreEqual(message, Placeholder.GetAttribute("placeholder"));
+        }
+        [Then(@"heading value must be (.*)")]
+        public void ThenHeadingValueMustBeTodos(string message)
+        {
+            Assert.AreEqual(message, TodosHeading.Text);
+        }
 
         #endregion
 
